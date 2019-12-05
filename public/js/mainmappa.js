@@ -1,11 +1,19 @@
-// JavaScript source code
 mapboxgl.accessToken = 'pk.eyJ1IjoibmVvc2NvbnN1bHRpbmciLCJhIjoiY2szcHpqdnBkMDU0bjNtcDZkaWU5ZXpnZiJ9.xtFDeoIlaNf2OJnwU_asng';
+
+var urlParams = new URLSearchParams(window.location.search);
+var coordinate = urlParams.get('coordinate');
+var zoommappa = urlParams.get('zoom');
+
+var latLng = coordinate.split(",");
+var lat = parseFloat(latLng[0]);
+var lng = parseFloat(latLng[1]);
+var description = "";
+
 var map = new mapboxgl.Map({
     container: 'map',
     style: 'mapbox://styles/mapbox/streets-v11',
-    center: [34.496366, 27.902782],
-    zoom: 1.6,
-    interactive: false
+    center: [lat, lng],
+    zoom: zoommappa,
 });
 
 map.dragRotate.disable();
@@ -15,12 +23,10 @@ map.touchZoomRotate.disableRotation();
 
 colors = ['#ffffff', '#E73D18'];
 
-
 map.on('load', function () {
-
-    map.loadImage('img/mapbox-icon.png', function (error, image) {
+    map.loadImage("/img/mapbox-icon.png", function (error, image) {
         if (error) throw error;
-        map.addImage('mapbox-icon', image);
+        map.addImage("mapbox-icon", image);
         // Add a new source from our GeoJSON data and set the
         // 'cluster' option to true. GL-JS will add the point_count property to your source data.
         map.addSource("clienti", {
@@ -81,11 +87,12 @@ map.on('load', function () {
             type: "symbol",
             source: "clienti",
             filter: ["!", ["has", "point_count"]],
-
-            "layout": {
-                "icon-image": "mapbox-icon",
-                "icon-size": 1
+            'layout': {
+                'icon-image': 'mapbox-icon',
+                "icon-size": 1,
+                "icon-allow-overlap": true
             }
+
             /*
             'paint': {
                 'circle-color': colors[0],
@@ -93,51 +100,90 @@ map.on('load', function () {
                 'circle-stroke-width': 3,
                 'circle-radius': 13
             }
-            */
+           */
         });
-
     });
-    map.on('click', 'unclustered-point', function (e) {
-       RestaMappa();
-        var features = map.queryRenderedFeatures(e.point, { layers: ['unclustered-point'] });
-        var clusterId = features[0].properties.cluster_id;
-        map.getSource('clienti').getClusterExpansionZoom(clusterId, function (err, zoom) {
-            var coordinate = features[0].geometry.coordinates;
-            // alert(coordinate);
 
-            window.open("mappa?coordinate=" + coordinate + "&zoom=9");
-            
-        });
+    map.on('click', 'unclustered-point', function (e) {
+        // Force the popup closed.
+        //e.layer.closePopup();
+        var content = "";
+        var features = map.queryRenderedFeatures(e.point, { layers: ['unclustered-point'] });
+        var ct = 0;
+       // console.log(features);
+        var arraylog = JSON.stringify(features);
+        // console.log(arraylog);
+        //alert(features);
+        for (i = 0; i < features.length; i++) {
+            ct++;
+            // console.log(features[i].values);
+        }
+        if (ct > 1)
+        {
+        content += '<div><strong> Sono presenti ' + ct + ' progetti: </strong> </div>';
+        }
+        else
+        {
+            content += "<div><strong> E' presente 1 progetto: </strong> </div>";
+        }
+        for (i = 0; i < features.length; i++) {
+            description = features[i].properties.description;
+            // var description = features[i].properties.description;
+
+            content += '<div>' + description + '</div>';
+        }
+        // alert(content);
+        info.innerHTML = content;
     });
 
     // inspect a cluster on click
     map.on('click', 'clusters', function (e) {
-        RestaMappa();
         var features = map.queryRenderedFeatures(e.point, { layers: ['clusters'] });
         var clusterId = features[0].properties.cluster_id;
         map.getSource('clienti').getClusterExpansionZoom(clusterId, function (err, zoom) {
-            var coordinate = features[0].geometry.coordinates;
-            window.open("mappa?coordinate=" + coordinate + "&zoom=" + zoom);
-        }); 
+            if (err)
+                return;
+
+            map.easeTo({
+                center: features[0].geometry.coordinates,
+                zoom: zoom
+            });
+        });
     });
 
-    // Cursor Pointer Su Cluster
-    map.on('mouseenter', 'clusters', function () {
-        map.getCanvas().style.cursor = 'pointer';
-    });
-    map.on('mouseleave', 'clusters', function () {
-        map.getCanvas().style.cursor = '';
-    });
+ // Cursor Pointer Su Cluster
+ map.on('mouseenter', 'clusters', function () {
+    map.getCanvas().style.cursor = 'pointer';
+});
+map.on('mouseleave', 'clusters', function () {
+    map.getCanvas().style.cursor = '';
+});
 
 
-    // Cursor Pointer su unclustered-point
-    map.on('mouseenter', 'unclustered-point', function () {
-        map.getCanvas().style.cursor = 'pointer';
-    });
-    map.on('mouseleave', 'unclustered-point', function () {
-        map.getCanvas().style.cursor = '';
-    });
+// Cursor Pointer su unclustered-point
+map.on('mouseenter', 'unclustered-point', function () {
+    map.getCanvas().style.cursor = 'pointer';
+});
+map.on('mouseleave', 'unclustered-point', function () {
+    map.getCanvas().style.cursor = '';
+});
 
 
+    empty();
+
+    function empty() {
+        // alert("ASD");
+        info.innerHTML = '<div><strong></strong></div>';
+    }
+
+    document.getElementById('fly').addEventListener('click', function () {
+        empty();
+        // Fly to a random location by offsetting the point -74.50, 40
+        // by up to 5 degrees.
+        map.flyTo({
+            center: [34.496366, 27.902782],
+            zoom: 1.6
+        });
+    });
 
 });
