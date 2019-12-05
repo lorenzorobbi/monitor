@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <!--- basic page needs
+    ================================================== -->
+    <meta charset="utf-8">
+    <title>Monitor Impianti - EuroImpianti</title>
+    <meta name="description" content="">
+    <meta name="author" content="NeosConsulting">
+
+    <!-- mobile specific metas
+    ================================================== -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- CSS
+    ================================================== -->
+    <link rel="stylesheet" href="../../css/base.css">
+    <link rel="stylesheet" href="../../css/main.css">
+
+    <!-- favicons
+    ================================================== -->
+    <link rel="shortcut icon" href="../../favicon.png" type="image/x-icon">
+    <link rel="icon" href="../../favicon.png" type="image/x-icon">
+
+
+
+    <!-- Carico Risorse tabelle e geomap -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+        integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+        integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
+        integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+        crossorigin="anonymous"></script>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v1.5.0/mapbox-gl.js'></script>
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v1.5.0/mapbox-gl.css' rel='stylesheet' />
+
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+
+    <!-- MapBox
+    ================================================== -->
+
+    <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v0.53.1/mapbox-gl.js"></script>
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <link href="https://api.tiles.mapbox.com/mapbox-gl-js/v0.53.1/mapbox-gl.css" rel="stylesheet" />
+    <link href="https://api.mapbox.com/mapbox-assembly/v0.23.2/assembly.min.css" rel="stylesheet">
+
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100%;
+        }
+
+        #key {
+            background-color: rgba(0, 0, 0, 0.8);
+            width: 22.22%;
+            height: auto;
+            overflow: auto;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .total {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 800;
+            font-size: 15px;
+        }
+
+        table tr,
+        td,
+        th {
+            text-align: center !important;
+        }
+
+        .info {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+
+        .info div {
+            background: #fff;
+            padding: 10px;
+            border-radius: 3px;
+        }
+
+        .res-circle {
+            width: 40px;
+            margin-left: 25%;
+            border-radius: 50%;
+            line-height: 0;
+            background: #FFFFFF;
+            margin-top: -8px;
+            margin-bottom: -8px;
+            /* NECESSARY FOR TEXT */
+            position: relative;
+        }
+
+        .res-circle:after {
+            content: "";
+            display: block;
+            padding-bottom: 100%;
+        }
+
+        .circle-txt {
+            position: absolute;
+            bottom: 50%;
+            width: 100%;
+            text-align: center;
+            /* NOT IMPORTANT */
+            font-family: arial, sans-serif;
+            font-size: 1em;
+            font-weight: bold;
+        }
+
+        .rosso {
+            border: 4px solid red;
+        }
+
+        .verde {
+            border: 4px solid #73AD21;
+        }
+
+        .arancione {
+            border: 4px solid orange;
+        }
+
+        .text-rosso{
+            color:red;
+        }
+
+        .text-verde{
+            color: #73AD21;
+        }
+
+        .text-arancione{
+            color: orange;
+        }
+    </style>
+
+    <script>
+        var tempolimiteschermata = 1000 * 10;
+        var temporefresh = 1000 * 60 * 60 * 2
+        <%
+        var limit = 17;
+        var table = 1;
+        var ct = 0;
+        var num = 0;
+        progetti.forEach(function (progetto) {
+            num++;
+        });
+        num = Math.ceil(num / limit);
+        %>
+        var numpage = <%=num %>;
+        var ct = 0;
+
+        // Inizia Scroll Automatico Tabelle
+        scroll = setInterval(ChangeView, parseInt(tempolimiteschermata));
+
+        // Funzione Per Scroll
+        function ChangeView() {
+            ct++;
+            if (ct > numpage) {
+                document.getElementById("vaiamappa").click();
+                ct = 0;
+            }
+            else {
+                stringa = "table-" + ct;
+                document.getElementById(stringa).click();
+            }
+        }
+
+        // Evento Al Click Con Tasto Sinistro
+        function ScrollClick() {
+            ChangeView();
+            clearInterval(scroll);
+            scroll = setInterval(ChangeView, parseInt(tempolimiteschermata));
+        }
+
+        function RestaMappa() {
+            ct = numpage + 1;
+            clearInterval(scroll);
+            scroll = setInterval(ChangeView, parseInt(tempolimiteschermata));
+
+        }home
+
+        // Refresh Pagina Per Ricaricare I Dati
+        /*
+        scroll2 = setInterval(function () {
+            location.reload();
+        }, temporefresh);
+        */
+    </script>
+
+</head>
+
+<body id="top">
+
+    <%
+        for (var c=1; c<=num; c++)
+    {
+        %>
+    <li style="display:none;"><a class="smoothscroll" id="table-<%= c %>" href="#tabella-<%= c %>"
+            title="#tabella-<%= c %>">tabella-<%= c %></a></li>
+    <%    
+    }
+    %>
+    <li style="display:none;"><a class="smoothscroll" id="vaiamappa" href="#home" title="tabella">mappa</a></li>
+
+
+    <section>
+
+        <div id="tabella-<%= table %>" style="width:100%;height:100%;position:relative;font-size:15px;"
+            onClick="ScrollClick()">
+            <table class="table table-bordered" id="data-table">
+                <thead>
+                    <tr>
+                        <th scope="col">CLIENTE</th>
+                        <th scope="col">NAZIONE</th>
+                        <th scope="col">N. COMM.</th>
+                        <th scope="col">% ACQUISTI</th>
+                        <th scope="col">% PROGETT.</th>
+                        <th scope="col">% MONTAGGIO</th>
+                        <th scope="col">% PRODUZIONE</th>
+                        <th scope="col">DATA DI CONSEGNA</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% 
+                    progetti.forEach(function(progetto) {
+                    ct++;
+                        progetto.Scadenza = progetto.Scadenza.replace('00:00:00.0','');
+                        progetto.nCommessa = progetto.nCommessa.substring(0, 4);
+            
+                     if( ct == limit) { 
+                         ct = 0;
+                        table= table+1;
+                         %>
+
+
+                    <tr id="tabella-<%=table %>"></tr>
+                    <% } %>
+
+                    <tr>
+                        <th scope="row"><%= progetto.name %></th>
+                        <td><%= progetto.nazione %></td>
+                        <td><%= progetto.nCommessa %></td>
+                        <td>
+                        <% if (progetto.prcAcquisti !=0)
+                        { %>
+                            <div class="res-circle
+                             <%=ScegliColore(progetto.prcAcquisti) %> ">
+                                <div class="circle-txt text-<%=ScegliColore(progetto.prcAcquisti) %>
+                                "><%= progetto.prcAcquisti %></div>
+                            </div>
+                        <% } %>
+                        </td>
+                        <td>
+                            <% if (progetto.prcProgettazione !=0)
+                        { %>
+                            <div class="res-circle
+                             <%=ScegliColore(progetto.prcProgettazione) %> ">
+                                <div class="circle-txt text-<%=ScegliColore(progetto.prcProgettazione) %>"> <%= progetto.prcProgettazione %></div>
+                            </div>
+                            <% } %>
+                        </td>
+                        <td>
+                            <% if (progetto.prcMontaggio !=0)
+                        { %>
+                            <div class="res-circle
+                             <%=ScegliColore(progetto.prcMontaggio) %> ">
+                                <div class="circle-txt text-<%=ScegliColore(progetto.prcMontaggio) %>">  <%= progetto.prcMontaggio %></div>
+                            </div>
+                            <% } %>
+                        </td>
+                        <td>
+                            <% if (progetto.prcProduzione !=0)
+                        { %>
+                            <div class="res-circle
+                             <%=ScegliColore(progetto.prcProduzione) %> ">
+                                <div class="circle-txt text-<%=ScegliColore(progetto.prcProduzione) %>">  <%= progetto.prcProduzione %></div>
+                            </div>
+                            <% } %>
+                        </td>
+                        <td><%= progetto.Scadenza %></td>
+                    </tr>
+                    <% });
+                    
+                    while (ct <= limit)
+                         { ct++; %>
+                    <tr id="tabella-<%= table %>">
+                        <td style="border:none;color: white;">- </td>
+                    </tr>
+                    <% } %>
+
+
+                </tbody>
+            </table>
+
+    </section>
+    </div>
+    <!-- home
+    ================================================== -->
+    <section id="home" class="s-home target-section" onClick="ScrollClick()" data-position-y=top>
+
+        <div id="map"></div>
+        <!-- <div id='info' class='info'></div> -->
+        <div id="key"></div>
+        <script src="../../js/main2.js"></script>
+    </section>
+
+    </div>
+    <!-- preloader
+    ================================================== -->
+    <div id="preloader">
+        <div id="loader">
+        </div>
+    </div>
+
+
+    <!-- Java Script
+    ================================================== -->
+    <script src="../../js/jquery-3.2.1.min.js"></script>
+    <script src="js/plugins.js"></script>
+    <script src="js/main.js"></script>
+
+</body>
+
+<%
+function ScegliColore(percentuale)
+{
+    console.log(percentuale);
+    if (percentuale < 36 )
+    {
+        return "rosso";
+    }
+    else if (percentuale >= 36 && percentuale <= 99)
+    {
+        return "arancione";
+    }
+    else if (percentuale == 100)
+    {
+        return "verde";
+    }
+}
+%>
+
+</html>
