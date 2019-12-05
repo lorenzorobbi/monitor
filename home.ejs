@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html class="no-js" lang="it">
+<head>
+
+    <!--- basic page needs
+    ================================================== -->
+    <meta charset="utf-8">
+    <title>Transcend</title>
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- mobile specific metas
+    ================================================== -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- CSS
+    ================================================== -->
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/vendor.css">
+    <link rel="stylesheet" href="css/main.css">
+
+    <!-- script
+    ================================================== -->
+    <script src="js/modernizr.js"></script>
+    <script src="js/pace.min.js"></script>
+
+    <!-- favicons
+    ================================================== -->
+    <link rel="shortcut icon" href="favicon.png" type="image/x-icon">
+    <link rel="icon" href="favicon.png" type="image/x-icon">
+
+
+
+    <!-- Carico Risorse tabelle e geomap -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v1.5.0/mapbox-gl.js'></script>
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v1.5.0/mapbox-gl.css' rel='stylesheet' />
+
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+
+    <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
+
+
+    <!-- MapBox
+    ================================================== -->
+
+    <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v0.53.1/mapbox-gl.js"></script>
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <link href="https://api.tiles.mapbox.com/mapbox-gl-js/v0.53.1/mapbox-gl.css" rel="stylesheet" />
+    <link href="https://api.mapbox.com/mapbox-assembly/v0.23.2/assembly.min.css" rel="stylesheet">
+
+    <style>
+
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100%;
+        }
+
+        #key {
+            background-color: rgba(0, 0, 0, 0.8);
+            width: 22.22%;
+            height: auto;
+            overflow: auto;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .total {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 800;
+            font-size: 15px;
+        }
+
+        
+        table tr, td, th  {
+            text-align: center !important;
+        }
+    </style>
+
+    
+
+
+    <script>
+        var ct = 0;
+
+        scroll = setInterval(function () {
+
+            if (ct == 0) {
+                ct = 1;
+                document.getElementById("vaiamappa").click();
+            }
+            else {
+                ct = 0;
+                document.getElementById("vaiatabella").click();
+            }
+
+        }, 60000);
+
+    </script>
+
+</head>
+
+<body id="top">
+    <li style="display:none;"><a class="smoothscroll" id="vaiamappa"  href="#home" title="home">home</a></li>
+    <li style="display:none;"><a class="smoothscroll" id="vaiatabella"  href="#tabella" title="tabella">tabella</a></li>
+
+    <section id="tabella">
+		<%= name %>
+        <div style="width:100%;height:100%;position:relative;font-size:13px;">
+            <table class="table table-bordered">
+                <thead>
+                
+                    <tr>
+                        <th scope="col">CLIENTE</th>
+                        <th scope="col">NAZIONE</th>
+                        <th scope="col">N. COMM.</th>
+                        <th scope="col">% ACQUISTI</th>
+                        <th scope="col">% PROGETTAZIONE</th>
+                        <th scope="col">% MONTAGGIO</th>
+                        <th scope="col">% PRODUZIONE</th>
+                        <th scope="col">DATA DI CONSEGNA</th>
+                    </tr>
+                </thead>
+                <tbody>
+                <% superheroes.forEach(function(superhero) { %>
+                    <tr>
+                        <th scope="row"><%= superhero.codice %></th>
+                        <td></td>
+                        <td><%= superhero.nation %></td>
+                        <td>85%</td>
+                        <td>76%</td>
+                        <td>12%</td>
+                        <td>98%</td>
+                        <td>LUG 2019</td>
+                    </tr>
+                    <% }); %>
+                    <tr>
+                        <th scope="row">GENESIS</th>
+                        <td>ITALIA</td>
+                        <td>1550</td>
+                        <td>85%</td>
+                        <td>76%</td>
+                        <td>12%</td>
+                        <td>98%</td>
+                        <td>LUG 2019</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">CAM</th>
+                        <td>ITALIA</td>
+                        <td>1235</td>
+                        <td>12%</td>
+                        <td>51%</td>
+                        <td>56%</td>
+                        <td>12%</td>
+                        <td>AGO 2019</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">GORETTI</th>
+                        <td>ITALIA</td>
+                        <td>6345</td>
+                        <td>12%</td>
+                        <td>32%</td>
+                        <td>56%</td>
+                        <td>98%</td>
+                        <td>AGO 2019</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">RELLUM</th>
+                        <td>GERMANIA</td>
+                        <td>56721</td>
+                        <td>67%</td>
+                        <td>34%</td>
+                        <td>12%</td>
+                        <td>76%</td>
+                        <td>AGO 2019</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">UMASTIC</th>
+                        <td>POLONIA</td>
+                        <td>12351</td>
+                        <td>85%</td>
+                        <td>12%</td>
+                        <td>64%</td>
+                        <td>76%</td>
+                        <td>AGO 2019</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">PLASTICMUNDI</th>
+                        <td>SPAGNA</td>
+                        <td>12351</td>
+                        <td>12%</td>
+                        <td>66%</td>
+                        <td>76%</td>
+                        <td>0%</td>
+                        <td>SET 2019</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">PLATUM</th>
+                        <td>NORVEGIA</td>
+                        <td>34536</td>
+                        <td>12%</td>
+                        <td>23%</td>
+                        <td>65%</td>
+                        <td>8%</td>
+                        <td>SET 2019</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">TASIO</th>
+                        <td>ITALIA</td>
+                        <td>73547</td>
+                        <td>54%</td>
+                        <td>12%</td>
+                        <td>45%</td>
+                        <td>65%</td>
+                        <td>SET 2019</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">QWERTY</th>
+                        <td>RUSSIA</td>
+                        <td>435345</td>
+                        <td>45%</td>
+                        <td>84%</td>
+                        <td>33%</td>
+                        <td>46%</td>
+                        <td>OTT 2019</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">IOQO</th>
+                        <td>STATI UNITI</td>
+                        <td>12351</td>
+                        <td>98%</td>
+                        <td>56%</td>
+                        <td>12%</td>
+                        <td>45%</td>
+                        <td>OTT 2019</td>
+                    </tr>
+
+
+                    <tr>
+                        <th scope="row">1NT</th>
+                        <td>ITALIA</td>
+                        <td>1551</td>
+                        <td>23%</td>
+                        <td>87%</td>
+                        <td>34%</td>
+                        <td>97%</td>
+                        <td>LUG 2019</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">GENESIS</th>
+                        <td>ITALIA</td>
+                        <td>1550</td>
+                        <td>34%</td>
+                        <td>12%</td>
+                        <td>56%</td>
+                        <td>87%</td>
+                        <td>LUG 2019</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">CAM</th>
+                        <td>ITALIA</td>
+                        <td>1235</td>
+                        <td>21%</td>
+                        <td>41%</td>
+                        <td>23%</td>
+                        <td>55%</td>
+                        <td>AGO 2019</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">GORETTI</th>
+                        <td>ITALIA</td>
+                        <td>63454</td>
+                        <td>85%</td>
+                        <td>76%</td>
+                        <td>12%</td>
+                        <td>98%</td>
+                        <td>AGO 2019</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">RELLUM</th>
+                        <td>GERMANIA</td>
+                        <td>56721</td>
+                        <td>76%</td>
+                        <td>45%</td>
+                        <td>21%</td>
+                        <td>56%</td>
+                        <td>AGO 2019</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">UMASTIC</th>
+                        <td>POLONIA</td>
+                        <td>12351</td>
+                        <td>89%</td>
+                        <td>78%</td>
+                        <td>45%</td>
+                        <td>77%</td>
+                        <td>AGO 2019</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">PLASTICMUNDI</th>
+                        <td>SPAGNA</td>
+                        <td>12351</td>
+                        <td>78%</td>
+                        <td>45%</td>
+                        <td>12%</td>
+                        <td>45%</td>
+                        <td>SET 2019</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">PLATUM</th>
+                        <td>NORVEGIA</td>
+                        <td>34536</td>
+                        <td>89%</td>
+                        <td>67%</td>
+                        <td>45%</td>
+                        <td>12%</td>
+                        <td>SET 2019</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">TASIO</th>
+                        <td>ITALIA</td>
+                        <td>73547</td>
+                        <td>12%</td>
+                        <td>2%</td>
+                        <td>5%</td>
+                        <td>23%</td>
+                        <td>SET 2019</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">QWERTY</th>
+                        <td>RUSSIA</td>
+                        <td>435345</td>
+                        <td>56%</td>
+                        <td>88%</td>
+                        <td>45%</td>
+                        <td>12%</td>
+                        <td>OTT 2019</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">IOQO</th>
+                        <td>STATI UNITI</td>
+                        <td>12351</td>
+                        <td>5%</td>
+                        <td>21%</td>
+                        <td>12%</td>
+                        <td>32%</td>
+                        <td>OTT 2019</td>
+                    </tr>
+                </tbody>
+            </table>
+
+    </section>
+    </div>
+
+    <!-- home
+    ================================================== -->
+    <section id="home" class="s-home target-section" data-position-y=top>
+
+        <div id="map"></div>
+        <div id="key"></div>
+        <script src="js/main2.js"></script>
+
+    </section> <!-- end s-home -->
+
+    </div> <!-- end photoSwipe background -->
+    <!-- preloader
+    ================================================== -->
+    <div id="preloader">
+        <div id="loader">
+        </div>
+    </div>
+
+
+    <!-- Java Script
+    ================================================== -->
+    <script src="js/jquery-3.2.1.min.js"></script>
+    <script src="js/plugins.js"></script>
+    <script src="js/main.js"></script>
+
+</body>
+
+</html>
